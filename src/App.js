@@ -9,13 +9,18 @@ import {
   DetectModerationLabelsCommand,
 } from "@aws-sdk/client-rekognition";
 
-const client = new RekognitionClient({
-  region: "ap-southeast-1",
-  credentials: {
-    accessKeyId: process.env.REACT_APP_ACCESS_KEY_ID,
-    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
-  },
-});
+const region = process.env.REACT_APP_REGION || "ap-southeast-1";
+
+const credentials = {
+  accessKeyId:
+    process.env.REACT_APP_ACCESS_KEY_ID ||
+    window.prompt("Enter your AWS accessKeyId."),
+  secretAccessKey:
+    process.env.REACT_APP_SECRET_ACCESS_KEY ||
+    window.prompt("Enter your AWS secretAccessKey."),
+};
+
+const client = new RekognitionClient({ region, credentials });
 
 const reader = (file) =>
   new Promise((resolve, reject) => {

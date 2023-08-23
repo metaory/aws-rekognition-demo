@@ -1,6 +1,21 @@
-# Getting Started with Create React App
+# AWS Rekognition Demo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Simple Browser Rekognition SDK V3 Client Demo
+
+# Setup
+
+```bash
+cp .env.example .env
+# update the .env file
+npm install
+npm start
+```
+
+### Note: when the `.env` file is not populated it will prompt for the keys
+
+### Note: the only permission needed is
+
+`"rekognition:DetectModerationLabels"`
 
 ## Available Scripts
 
