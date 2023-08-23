@@ -12,15 +12,9 @@ import {
 const region = process.env.REACT_APP_REGION || "ap-southeast-1";
 
 const credentials = {
-  accessKeyId:
-    process.env.REACT_APP_ACCESS_KEY_ID ||
-    window.prompt("Enter your AWS accessKeyId."),
-  secretAccessKey:
-    process.env.REACT_APP_SECRET_ACCESS_KEY ||
-    window.prompt("Enter your AWS secretAccessKey."),
+  accessKeyId: process.env.REACT_APP_ACCESS_KEY_ID,
+  secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY,
 };
-
-const client = new RekognitionClient({ region, credentials });
 
 const reader = (file) =>
   new Promise((resolve, reject) => {
@@ -37,6 +31,7 @@ export default class App extends Component {
     this.state = {
       moderationResult: JSON.stringify({ ERROR: "Select and image!" }),
       imagePreview: `${process.env.PUBLIC_URL}/placeholder.png`,
+      credentials,
     };
   }
 
@@ -53,6 +48,12 @@ export default class App extends Component {
 
     const ua = new Uint8Array(imageBytes).map((_, i) => base64.charCodeAt(i));
 
+    console.log("this.state.credentials:", this.state.credentials);
+
+    const { credentials } = this.state;
+
+    const client = new RekognitionClient({ region, credentials });
+
     const input = {
       Image: { Bytes: ua },
       Attributes: ["ALL"],
@@ -67,16 +68,48 @@ export default class App extends Component {
     this.setState({ moderationResult: JSON.stringify(response, null, 2) });
   };
 
+  handleAccessKeyIdChange = ({ target: { value } }) => {
+    this.setState({
+      credentials: { ...this.state.credentials, accessKeyId: value },
+    });
+  };
+
+  handleSecretKeyChange = ({ target: { value } }) => {
+    this.setState({
+      credentials: { ...this.state.credentials, secretAccessKey: value },
+    });
+  };
+
   render() {
     return (
       <div className="App">
         <header className="App-header">
+          <label>
+            accessKeyId
+            <input
+              value={this.state.credentials.accessKeyId}
+              onChange={this.handleAccessKeyIdChange}
+              type="text"
+            />
+          </label>
+
+          <label>
+            secretAccessKey
+            <input
+              value={this.state.credentials.secretAccessKey}
+              onChange={this.handleSecretKeyChange}
+              type="text"
+            />
+          </label>
+
           <input
             type="file"
             accept="image/*"
             onChange={this.handleFileChange}
           />
+
           <img src={this.state.imagePreview} alt="preview" />
+
           <JSONPretty
             id="json-pretty"
             mainStyle="text-align:left"
